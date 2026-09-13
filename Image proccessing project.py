@@ -121,7 +121,7 @@ def detect_arrows(image):
     # Sort results from top to bottom, then left to right
     directions.sort(key=lambda item: (item[1], item[0]))
     detected_directions = [item[2] for item in directions]
-    return output, binary, detected_directions
+    return output, gray, binary, detected_directions
 
 # Load the input image
 image_path = "Example 1.webp"
@@ -129,17 +129,20 @@ image = cv2.imread(image_path)
 if image is None: 
     print("Error: Image not found.") 
 else: 
-    result, binary, directions = detect_arrows(image) 
+    result, gray, binary, directions = detect_arrows(image)
     print("Detected Directions:", directions) 
  
-    # Display results 
-    plt.figure(figsize=(12, 6)) 
-    plt.subplot(121) 
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)) 
-    plt.title("Original Image") 
-    plt.axis("off") 
-    plt.subplot(122) 
-    plt.imshow(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
-    plt.title("Arrow Detection Result")
-    plt.axis("off")
-    plt.show()
+plt.figure(figsize=(18, 6))
+plt.subplot(131)
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.title("Original Image")
+plt.axis("off")
+plt.subplot(132)
+plt.imshow(gray, cmap="gray")
+plt.title("Grayscale Image")
+plt.axis("off")
+plt.subplot(133)
+plt.imshow(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
+plt.title("Arrow Detection Result")
+plt.axis("off")
+plt.show()
