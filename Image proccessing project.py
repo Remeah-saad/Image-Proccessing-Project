@@ -20,7 +20,7 @@ def calculate_angle(p1, p2, p3):
 
 # I used image moments to find the center of each arrow
 def find_centroid(contour):
-    M = cv2.moments(contour)
+    M = cv2.moments(contour) #يحسب خصائص الشكل، ونستخدمه لإيجاد مركز السهم.
     if M["m00"] == 0:
         return None
     cx = int(M["m10"] / M["m00"])
@@ -29,8 +29,8 @@ def find_centroid(contour):
 
 # I used sharp contour points to find the arrow tip
 def find_arrow_tip(contour):
-    perimeter = cv2.arcLength(contour, True)
-    approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
+    perimeter = cv2.arcLength(contour, True) #محيط
+    approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)#يحتفظ بالزوايا المهمة.
     points = approx.reshape(-1, 2)
     if len(points) < 3:
         return None, approx
@@ -73,10 +73,9 @@ def determine_direction(center, tip):
 
 # Main function for detecting multiple arrows
 def detect_arrows(image):
-    output = image.copy()
-
     # I converted the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    output = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 
     # I used Gaussian Blur to reduce noise
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -87,7 +86,9 @@ def detect_arrows(image):
     # I used morphological closing to clean small gaps
     kernel = np.ones((3, 3), np.uint8)
     binary = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel, iterations=2)
-
+# Make the result image: black arrow on white background
+    display_binary = cv2.bitwise_not(binary)
+    output = cv2.cvtColor(display_binary, cv2.COLOR_GRAY2BGR)
     # I used contours to find all objects
     contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     directions = []
@@ -124,7 +125,7 @@ def detect_arrows(image):
     return output, gray, binary, detected_directions
 
 # Load the input image
-image_path = "Example 1.webp"
+image_path = "Example 4.png"
 image = cv2.imread(image_path)
 if image is None: 
     print("Error: Image not found.") 
